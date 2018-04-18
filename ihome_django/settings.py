@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for ihome_django project.
 
@@ -105,3 +106,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+# 静态路径
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
