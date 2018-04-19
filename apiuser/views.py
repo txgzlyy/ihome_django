@@ -16,9 +16,6 @@ from utils.sms_code import CCP
 
 # Create your views here.
 
-def indexs(req):
-    return render(req,'index.html')
-
 
 @transaction.atomic
 def register(req):
@@ -70,7 +67,7 @@ def register(req):
 
     transaction.savepoint_commit(said)  # 提交事务
 
-    # 保存登陆状态
+    # 保存注册信息
     req.session["user_id"] = user_save.id
     req.session['user_name'] = user_save.name
     req.session['mobile'] = mobile
@@ -153,6 +150,40 @@ def smscode(req):
     else:
         return JsonResponse({'errno': RET.DATAERR, "errmsg": '短信验证码发送失败'})
 
+def login(req):
+    '''登陆'''
+    if req.method == 'GET':
+        return render(req, 'login.html')
+
+    if req.method != 'POST':
+        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
+    data = json.loads(req.body)
+    mobile = data.get("mobile")
+    password = data.get("password")
+    if not all([mobile,password]):
+        return JsonResponse({'errno': RET.PARAMERR, "errmsg": '参数不完整'})
+
+    # 手机号格式校验
+    if not re.match(r"1[34578]\d{9}$", mobile):
+        return JsonResponse({'errno': RET.PARAMERR, 'errmsg': "手机号格式不正确"})
+    try:
+        user = UserInfos.objects.filter(mobile=mobile).first()
+    except Exception as e:
+        return JsonResponse({'errno': RET.DBERR, 'errmsg': "数据库异常"})
+
+    if user is None:
+        return JsonResponse({'errno': RET.DATAERR, 'errmsg': "手机号未注册"})
+    # 检验密码
+    password_hash = sha1(password).hexdigest()
+    if password_hash != user.password:
+        return JsonResponse({'errno': RET.DATAERR, 'errmsg': "密码不正确"})
+
+    # 保存登陆信息
+    req.session["user_id"] = user.id
+    req.session['user_name'] = user.name
+    req.session['mobile'] = mobile
+
+    return JsonResponse({'errno': RET.OK, "errmsg": 'OK'})
 
 def get_session(req):
     '''获取登陆信息'''

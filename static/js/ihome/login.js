@@ -37,7 +37,7 @@ $(document).ready(function() {
             contentType: "application/json",
             dataType: "json",
             headers:{
-                "X-CSRFTOKEN":getCookie("csrf_token"),
+                "X-CSRFTOKEN":getCookie("csrftoken"),
             },
             success: function (data) {
                 if ("0" == data.errno) {
