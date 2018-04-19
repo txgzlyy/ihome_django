@@ -5,7 +5,6 @@ import re
 from django.db import transaction
 from hashlib import sha1
 from models import UserInfos
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from utils.captcha.captcha import captcha
 # redis缓存
@@ -13,6 +12,7 @@ from utils.redis_store import redis_store
 from utils import constens
 from utils.response_code import RET
 from utils.sms_code import CCP
+from utils.check import chech_get
 
 # Create your views here.
 
@@ -20,8 +20,6 @@ from utils.sms_code import CCP
 @transaction.atomic
 def register(req):
     '''GET请求为战士注册页  POST请求发送注册请求'''
-    if req.method == 'GET':
-        return render(req, 'register.html')
     if req.method != 'POST':
         return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
     data = json.loads(req.body)  # 获取post数据  {"mobile": mobile,"password": passwd,"sms_code": phoneCode}
@@ -74,12 +72,11 @@ def register(req):
 
     return JsonResponse({'errno': RET.OK, "errmsg": '注册成功！'})
 
+
+@chech_get
 def imagecode(req):
     '''生成图片验证码'''
     # 上一次img id
-    if req.method != 'GET':
-        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
-
     pre_imgcode = req.GET.get("pre")
     # 当前img_id
     cur_imgcode = req.GET.get("cur")
@@ -99,10 +96,11 @@ def imagecode(req):
     # 类容格式  "image/png"
     return HttpResponse(img, "image/png")
 
+
 def smscode(req):
+    '''短信验证码'''
     if req.method != 'POST':
         return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
-    '''短信验证码'''
     data = json.loads(req.body)
     mobile = data.get('mobile')  # 手机号
     text = data.get("text") # 图片验证码
@@ -152,9 +150,6 @@ def smscode(req):
 
 def login(req):
     '''登陆'''
-    if req.method == 'GET':
-        return render(req, 'login.html')
-
     if req.method != 'POST':
         return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
     data = json.loads(req.body)
@@ -185,11 +180,10 @@ def login(req):
 
     return JsonResponse({'errno': RET.OK, "errmsg": 'OK'})
 
+
+@chech_get
 def get_session(req):
     '''获取登陆信息'''
-    if req.method != 'GET':
-        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
-
     user_id = req.session.get('user_id')
     if user_id is None:
         return JsonResponse({'errno': RET.DATAERR, "errmsg": '未登录'})

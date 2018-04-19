@@ -17,66 +17,66 @@
         <div class="top-bar">
             <div class="nav-bar">
                 <h3 class="page-title">我的订单</h3>
-                <a class="nav-btn fl" href="/my.html"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
+                <a class="nav-btn fl" href="/html/my"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
             </div>
         </div>
         <div class="orders-con">
             <ul class="orders-list">
             </ul>
-            <script id="orders-list-tmpl" type="text/html">
-                {{if orders}}
-                {{each orders as order}}
-                <li order-id={{order.order_id}}>
-                    <div class="order-title">
-                        <h3>订单编号：{{order.order_id}}</h3>
-                        {{ if "WAIT_COMMENT" == order.status }}
-                        <div class="fr order-operate">
-                            <button type="button" class="btn btn-success order-comment" data-toggle="modal" data-target="#comment-modal">发表评价</button>
-                        </div>
-                        {{ else if "WAIT_PAYMENT" == order.status }}
-                        <div class="fr order-operate">
-                            <button type="button" class="btn btn-success order-pay">去支付</button>
-                        </div>
-                        {{/if}}
-                    </div>
-                    <div class="order-content">
-                        <img src="{{order.img_url}}">
-                        <div class="order-text">
-                            <h3>{{order.title}}</h3>
-                            <ul>
-                                <li>创建时间：{{order.ctime}}</li>
-                                <li>入住日期：{{order.start_date}}</li>
-                                <li>离开日期：{{order.end_date}}</li>
-                                <li>合计金额：￥{{order.amount}}(共{{order.days}}晚)</li>
-                                <li>订单状态：
-                                    <span>
-                                        {{if "WAIT_ACCEPT" == order.status}}
-                                            待接单
-                                        {{else if "WAIT_PAYMENT" == order.status}}
-                                            待支付
-                                        {{else if "WAIT_COMMENT" == order.status}}
-                                            待评价
-                                        {{else if "COMPLETE" == order.status}}
-                                            已完成
-                                        {{else if "REJECTED" == order.status}}
-                                            已拒单
-                                        {{/if}}
-                                    </span>
-                                </li>
-                                {{if "COMPLETE" == order.status}}
-                                <li>我的评价： {{order.comment}}</li>
-                                {{else if "REJECTED" == order.status}}
-                                <li>拒单原因： {{order.comment}}</li>
-                                {{/if}}
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                {{/each}}
-                {{else}}
-                暂时没有订单。
-                {{/if}}
-            </script>
+
+{#                {{if orders}}#}
+{#                {{each orders as order}}#}
+{#                <li order-id={{order.order_id}}>#}
+{#                    <div class="order-title">#}
+{#                        <h3>订单编号：{{order.order_id}}</h3>#}
+{#                        {{ if "WAIT_COMMENT" == order.status }}#}
+{#                        <div class="fr order-operate">#}
+{#                            <button type="button" class="btn btn-success order-comment" data-toggle="modal" data-target="#comment-modal">发表评价</button>#}
+{#                        </div>#}
+{#                        {{ else if "WAIT_PAYMENT" == order.status }}#}
+{#                        <div class="fr order-operate">#}
+{#                            <button type="button" class="btn btn-success order-pay">去支付</button>#}
+{#                        </div>#}
+{#                        {{/if}}#}
+{#                    </div>#}
+{#                    <div class="order-content">#}
+{#                        <img src="{{order.img_url}}">#}
+{#                        <div class="order-text">#}
+{#                            <h3>{{order.title}}</h3>#}
+{#                            <ul>#}
+{#                                <li>创建时间：{{order.ctime}}</li>#}
+{#                                <li>入住日期：{{order.start_date}}</li>#}
+{#                                <li>离开日期：{{order.end_date}}</li>#}
+{#                                <li>合计金额：￥{{order.amount}}(共{{order.days}}晚)</li>#}
+{#                                <li>订单状态：#}
+{#                                    <span>#}
+{#                                        {{if "WAIT_ACCEPT" == order.status}}#}
+{#                                            待接单#}
+{#                                        {{else if "WAIT_PAYMENT" == order.status}}#}
+{#                                            待支付#}
+{#                                        {{else if "WAIT_COMMENT" == order.status}}#}
+{#                                            待评价#}
+{#                                        {{else if "COMPLETE" == order.status}}#}
+{#                                            已完成#}
+{#                                        {{else if "REJECTED" == order.status}}#}
+{#                                            已拒单#}
+{#                                        {{/if}}#}
+{#                                    </span>#}
+{#                                </li>#}
+{#                                {{if "COMPLETE" == order.status}}#}
+{#                                <li>我的评价： {{order.comment}}</li>#}
+{#                                {{else if "REJECTED" == order.status}}#}
+{#                                <li>拒单原因： {{order.comment}}</li>#}
+{#                                {{/if}}#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </li>#}
+{#                {{/each}}#}
+{#                {{else}}#}
+{#                暂时没有订单。#}
+{#                {{/if}}#}
+
             <div class="modal fade" id="comment-modal" tabindex="-1" role="dialog" aria-labelledby="comment-label">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">

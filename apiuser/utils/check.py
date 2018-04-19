@@ -1,5 +1,6 @@
 # coding=utf-8
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
+from response_code import RET
 
 
 def chech_login(func):
@@ -15,6 +16,14 @@ def chech_login(func):
         ]
         if path not in (paths):
             return HttpResponseRedirect('/v1.0/sessions/')
-        func(request,args,kwargs)
+        return func(request,args,kwargs)
     return inner
 
+
+def chech_get(func):
+    def inner(request,*args,**kwargs):
+        if request.method != 'GET':
+            return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
+        print 123
+        return func(request,*args,**kwargs)
+    return inner
