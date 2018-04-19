@@ -26,14 +26,15 @@
         <div class="swiper-container">
             <div class="swiper-wrapper">
             </div>
-            <script id="swiper-houses-tmpl" type="text/html">
-                {{each houses as house}}
-                <div class="swiper-slide">
-                    <a href="/detail.html?id={{house.house_id}}"><img src="{{house.index_image_url}}"></a>
-                    <div class="slide-title">{{house.title}}</div>
-                </div>
-                {{/each}}
-            </script>
+
+{#                {{each houses as house}}#}
+{#                <div class="swiper-slide">#}
+{#                    <a href="/detail.html?id={{house.house_id}}"><img src="{{house.index_image_url}}"></a>#}
+{#                    <div class="slide-title">{{house.title}}</div>#}
+{#                </div>#}
+{#                {{/each}}#}
+
+
             <div class="swiper-pagination"></div>
         </div>
         <div class="search-bar">
@@ -51,11 +52,11 @@
                         <div class="modal-body">
                             <div class="area-list">
                             </div>
-                            <script id="area-list-tmpl" type="text/html">
-                            {{each areas as area}}
-                                <a href="#" area-id="{{area.aid}}">{{area.aname}}</a>
-                            {{/each}}
-                            </script>
+
+{#                            {{each areas as area}}#}
+{#                                <a href="#" area-id="{{area.aid}}">{{area.aname}}</a>#}
+{#                            {{/each}}#}
+
                         </div>
                     </div>
                 </div>

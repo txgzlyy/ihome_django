@@ -53,11 +53,12 @@ function sendSMSCode() {
         text:imageCode,
         id:imageCodeId
     };
+    console.log(getCookie('csrftoken'))
     $.ajax({
         method : "POST",
         url : "/api/v1.0/smscode/",
         headers:{
-            "X-CSRFToken" : getCookie('csrf_token')
+            "X-CSRFToken" : getCookie('csrftoken')
         },
         data: JSON.stringify(data),
         contentType : "application/json",
@@ -160,13 +161,13 @@ $(document).ready(function() {
             contentType: "application/json",  // 指明发送到后端的数据格式是json
             data: JSON.stringify(req),
             headers: {
-                "X-CSRFToken": getCookie("csrf_token") // 后端开启了csrf防护，所以前端发送json数据的时候，需要包含这个请求头
+                "X-CSRFToken": getCookie("csrftoken") // 后端开启了csrf防护，所以前端发送json数据的时候，需要包含这个请求头
             },
             dataType: "json", // 指明后端返回到前端的数据是json格式的
             success: function(resp){
                 if (resp.errno == "0") {
                     // 表示注册成功,跳转到主页
-                    location.href = "/index.html";
+                    location.href = "/";
                 } else if (resp.errno == "4101") {
                     // 表示用户注册成功，但是用户的登录状态后端未保存，所以跳转到登录页面
                     location.href = "/login.html";
