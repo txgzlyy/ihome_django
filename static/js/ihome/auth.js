@@ -17,7 +17,7 @@ $(document).ready(function(){
     $.get("/api/v1.0/user/auth", function(resp){
         // 4101代表用户未登录
         if ("4101" == resp.errno) {
-            location.href = "/login.html";
+            location.href = "/html/login";
         }
         else if ("0" == resp.errno) {
             // 如果返回的数据中real_name与id_card不为null，表示用户有填写实名信息
@@ -54,7 +54,7 @@ $(document).ready(function(){
             contentType: "application/json",
             dataType: "json",
             headers: {
-                "X-CSRFTOKEN": getCookie("csrf_token")
+                "X-CSRFTOKEN": getCookie("csrftoken")
             },
             success: function (resp) {
                 if (0 == resp.errno) {

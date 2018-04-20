@@ -12,7 +12,8 @@ from utils.redis_store import redis_store
 from utils import constens
 from utils.response_code import RET
 from utils.sms_code import CCP
-from utils.check import chech_get
+from utils.check import chech_get, chech_login
+from utils.qiniu_store import push_img
 
 # Create your views here.
 
@@ -54,7 +55,7 @@ def register(req):
     password_hash = sha1(password).hexdigest()
     print password_hash
 
-    user_save = UserInfos(mobile=mobile, password=password_hash)
+    user_save = UserInfos(mobile=mobile, password=password_hash, name=mobile)
     # 创建事务 sid
     said = transaction.savepoint()
     try:
@@ -148,6 +149,7 @@ def smscode(req):
     else:
         return JsonResponse({'errno': RET.DATAERR, "errmsg": '短信验证码发送失败'})
 
+
 def login(req):
     '''登陆'''
     if req.method != 'POST':
@@ -182,10 +184,140 @@ def login(req):
 
 
 @chech_get
+@chech_login
 def get_session(req):
     '''获取登陆信息'''
     user_id = req.session.get('user_id')
-    if user_id is None:
-        return JsonResponse({'errno': RET.DATAERR, "errmsg": '未登录'})
-    data = {'name':req.session.get('name') if req.session.get('name') else req.session.get('mobile')}
+    try:
+        user = UserInfos.objects.filter(id=user_id).first()
+    except Exception as e:
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    if not user:
+        return JsonResponse({'errno': RET.DATAERR, "errmsg": '信息有误'})
+    name = user.name
+    data = {'name':name}
     return JsonResponse({'errno': RET.OK, "errmsg": 'OK','data':data})
+
+
+@chech_get
+@chech_login
+def get_user(req):
+    '''获取用户信息'''
+    user_id = req.session.get('user_id')
+    try:
+        user = UserInfos.objects.filter(id=user_id).first()
+    except Exception as e:
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    if not user:
+        return JsonResponse({'errno': RET.DATAERR, "errmsg": '信息有误'})
+    name = user.name
+    avator = constens.QINIU_IMG_URL + user.avator
+    mobile = user.mobile
+
+    data = {'name':name, "mobile":mobile, "avatar":avator}
+    return JsonResponse({'errno': RET.OK, "errmsg": 'OK','data':data})
+
+
+@chech_login
+@transaction.atomic
+def change_username(req):
+    '''修改用户名'''
+    if req.method != 'PUT':
+        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
+    user_id = req.session.get('user_id')
+    data = json.loads(req.body)
+    name = data.get("name")
+    if name is None:
+        return JsonResponse({'errno': RET.PARAMERR, "errmsg": '参数缺失'})
+
+    said = transaction.savepoint()
+    try:
+        user = UserInfos.objects.filter(id=user_id).first()
+        if not user:
+            return JsonResponse({'errno': RET.DATAERR, "errmsg": '信息有误'})
+        user.name = name
+        user.save()
+    except Exception as e:
+        transaction.savepoint_rollback(said)
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    # 提交保存
+    transaction.savepoint_commit(said)
+
+    return JsonResponse({'errno': RET.OK, "errmsg": 'OK'})
+
+
+@chech_login
+@transaction.atomic
+def up_avator(req):
+    '''上传头像'''
+    if req.method != 'POST':
+        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
+
+    user_id = req.session.get('user_id')
+
+    img_data = req.FILES.get("avatar").read()   # 接受二进制数据   .read() 注意
+
+    try:
+        avatar_url = push_img(img_data)
+        avatar_url = avatar_url['hash']
+    except Exception as e:
+        return JsonResponse({'errno':RET.THIRDERR, 'errmsg':'第三方程序错误'})
+    # 把图片url 存入数据库
+
+    said = transaction.savepoint()
+    try:
+        user = UserInfos.objects.filter(id=user_id).first()
+        if not user:
+            return JsonResponse({'errno': RET.DATAERR, "errmsg": '信息有误'})
+        user.avator = avatar_url
+        user.save()
+    except Exception as e:
+        transaction.savepoint_rollback(said)
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    transaction.savepoint_commit(said)
+
+    data = {"avatar_url": constens.QINIU_IMG_URL+avatar_url}
+    return JsonResponse({'errno': RET.OK, "errmsg": 'OK', 'data': data})
+
+
+
+@chech_login
+@transaction.atomic
+def user_auth(req):
+    '''实名认证'''
+    user_id = req.session["user_id"]
+    try:
+        user = UserInfos.objects.filter(id=user_id).first()
+    except Exception as e:
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    if not user:
+        return JsonResponse({'errno': RET.DATAERR, "errmsg": '信息有误'})
+    # 读取
+    if req.method == 'GET':
+        relname = user.relname
+        id_card = user.id_card
+        data = {"real_name": relname, "id_card":id_card}
+        return JsonResponse({'errno': RET.OK, "errmsg": 'OK', 'data': data})
+
+    # 修改
+    if req.method != 'POST':
+        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
+    data = json.loads(req.body)
+    relname = data.get("real_name")
+    id_card = data.get("id_card")
+    if not all([relname,id_card]):
+        return JsonResponse({'errno': RET.PARAMERR, "errmsg": '参数不完整'})
+    user.relname = relname
+    user.id_card = id_card
+
+    said = transaction.savepoint()
+    try:
+        user.save()
+    except Exception as e:
+        transaction.savepoint_rollback(said)
+        return JsonResponse({'errno': RET.DBERR, "errmsg": '数据库查询错误'})
+    transaction.savepoint_commit(said)
+    return JsonResponse({'errno': RET.OK, "errmsg": 'ok'})
+
+
+

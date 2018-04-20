@@ -20,6 +20,7 @@ $(document).ready(function () {
         }
         // 查询到了用户的信息
         else if ("0" == resp.errno) {
+            console.log(resp.data.name);
             $("#user-name").val(resp.data.name);
             if (resp.data.avatar) {
                 $("#user-avatar").attr("src", resp.data.avatar);
@@ -35,7 +36,7 @@ $(document).ready(function () {
             url: "/api/v1.0/user/avatar",
             type: "post",
             headers: {
-                "X-CSRFToken": getCookie("csrf_token"),
+                "X-CSRFToken": getCookie("csrftoken")
             },
             dataType: "json",
             success: function (resp) {
@@ -68,7 +69,7 @@ $(document).ready(function () {
             contentType: "application/json",
             dataType: "json",
             headers:{
-                "X-CSRFTOKEN":getCookie("csrf_token")
+                "X-CSRFTOKEN":getCookie("csrftoken")
             },
             success: function (data) {
                 if ("0" == data.errno) {
