@@ -24,26 +24,6 @@ $(document).ready(function(){
         }
     }, "json");
 
-
-    // $.get("/api/v1.0/user/houses", function (resp) {
-    //     if ("0" == resp.errno) {
-    //         for(var item in resp.data.houses){
-    //             $("input[name="+item+"]").val(resp.data.houses[item]);
-    //             $("textarea[name="+item+"]").text(resp.data.houses[item]);
-    //             if(item == 'facilitys'){
-    //                 for(var i in resp.data.houses[item]){
-    //                     $("input[value="+i+"]").attr("checked",'checked');
-    //                 }
-    //             }
-    //
-    //         }
-    //         console.log(resp.data);
-    //         //$("#area-id").html(rendered_html);
-    //     } else {
-    //         alert(resp.errmsg);
-    //     }
-    // }, "json");
-
     // 处理房屋基本信息的表单数据
     $("#form-house-info").submit(function (e) {
         e.preventDefault();
@@ -68,11 +48,11 @@ $(document).ready(function(){
             contentType: "application/json",
             dataType: "json",
             headers: {
-                "X-CSRFToken": getCookie("csrf_token")
+                "X-CSRFToken": getCookie("csrftoken")
             },
             success: function(resp){
                 if ("4101" == resp.errno) {
-                    location.href = "/login.html";
+                    location.href = "/html/login";
                 } else if ("0" == resp.errno) {
                     // 后端保存数据成功
                     // 隐藏基本信息的表单
@@ -98,7 +78,7 @@ $(document).ready(function(){
             url: "/api/v1.0/houses/"+house_id+"/images",
             type: "post",
             headers: {
-                "X-CSRFToken": getCookie("csrf_token")
+                "X-CSRFToken": getCookie("csrftoken")
             },
             dataType: "json",
             success: function (resp) {
