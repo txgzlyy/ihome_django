@@ -5,7 +5,7 @@ import re
 from django.db import transaction
 from hashlib import sha1
 from models import UserInfos
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from utils.captcha.captcha import captcha
 # redis缓存
 from utils.redis_store import redis_store
@@ -183,10 +183,16 @@ def login(req):
     return JsonResponse({'errno': RET.OK, "errmsg": 'OK'})
 
 
-@chech_get
-@chech_login
 def get_session(req):
-    '''获取登陆信息'''
+    '''获取登陆信息 登出'''
+    if req.method == 'DELETE':
+        if not req.session.get('user_id'):
+            return HttpResponseRedirect('/html/login/')
+        req.session.delete()
+        return JsonResponse({'errno': RET.OK, "errmsg": 'OK'})
+
+    if req.method != 'GET':
+        return JsonResponse({'errno': RET.REQERR, "errmsg": '请求方式不允许'})
     user_id = req.session.get('user_id')
     try:
         user = UserInfos.objects.filter(id=user_id).first()
@@ -278,7 +284,6 @@ def up_avator(req):
 
     data = {"avatar_url": constens.QINIU_IMG_URL+avatar_url}
     return JsonResponse({'errno': RET.OK, "errmsg": 'OK', 'data': data})
-
 
 
 @chech_login

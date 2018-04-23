@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.conf.urls import url
 import views
+from house.views import get_area
 
 urlpatterns = [
     url(r'^users/$', views.register),
@@ -12,5 +13,5 @@ urlpatterns = [
     url(r'^smscode/$', views.smscode),
     url(r'^sessions/$', views.login),  # 登陆
     url(r'^session/$', views.get_session),  # 获取登陆信息
-    #url(r'^v1.0/houses/index$', views.get_houses),
+    url(r'^areas$', get_area),
 ]

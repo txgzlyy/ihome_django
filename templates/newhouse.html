@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head> 
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -40,17 +40,19 @@
                             <label for="area-id">所在城区</label>
                             <select class="form-control" id="area-id" name="area_id">
                             </select>
-
-{#                                {{each areas as area}}#}
-{#                                <option value="{{area.aid}}">{{area.aname}}</option>#}
-{#                                {{/each}}#}
-
+                            <script id="areas-tmpl" type="text/html">
+                                {% verbatim %}
+                                {{each areas as area}}
+                                    <option value="{{area.aid}}">{{area.aname}}</option>
+                                {{/each}}
+                                {% endverbatim %}
+                            </script>
 
                         </div>
                         <div class="form-group">
                             <label for="house-address">详细地址</label>
                             <textarea class="form-control" name="address" id="house-address" required></textarea>
-                        </div> 
+                        </div>
                     </div>
                 </li>
                 <li>
@@ -77,7 +79,7 @@
                         <div class="form-group">
                             <label for="house-beds">卧床配置</label>
                             <input type="text" class="form-control" name="beds" id="house-beds" placeholder="如：双人床:2x1.8x1张 1.5x2x2张" required>
-                        </div> 
+                        </div>
                         <div class="form-group">
                             <label for="house-deposit">押金数额</label>
                             <input type="number" class="form-control" name="deposit" id="house-deposit" required>
@@ -292,9 +294,9 @@
         </div>
         <div class="footer">
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
-        </div> 
+        </div>
     </div>
-    
+
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/jquery.form.min.js"></script>
     <script src="/static/js/template.js"></script>

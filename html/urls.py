@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^lorders/$', views.lorders),
     url(r'^my/$', views.my),
     url(r'^myhouse/$', views.myhouse),
+    url(r'^newhouse/$', views.newhouse),
     url(r'^orders/$', views.orders),
     url(r'^profile/$', views.profile),
     url(r'^register/$', views.register),

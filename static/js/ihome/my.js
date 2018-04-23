@@ -9,12 +9,12 @@ function logout() {
         url: "/api/v1.0/session",
         type: "delete",
         headers: {
-            "X-CSRFToken": getCookie("csrf_token")
+            "X-CSRFToken": getCookie("csrftoken")
         },
         dataType: "json",
         success: function (resp) {
             if ("0" == resp.errno) {
-                location.href = "/index.html";
+                location.href = "/";
             }
         }
     });

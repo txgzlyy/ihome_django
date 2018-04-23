@@ -35,6 +35,7 @@
 {#                {{/each}}#}
 
 
+
             <div class="swiper-pagination"></div>
         </div>
         <div class="search-bar">
@@ -52,11 +53,13 @@
                         <div class="modal-body">
                             <div class="area-list">
                             </div>
-
-{#                            {{each areas as area}}#}
-{#                                <a href="#" area-id="{{area.aid}}">{{area.aname}}</a>#}
-{#                            {{/each}}#}
-
+                            <script id="area-list-tmpl" type="text/html">
+                                {% verbatim %}
+                                {{each areas as area}}
+                                    <a href="#" area-id="{{area.aid}}">{{area.aname}}</a>
+                                {{/each}}
+                                {% endverbatim %}
+                            </script>
                         </div>
                     </div>
                 </div>
