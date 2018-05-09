@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^areas$', get_area),
     url(r'^houses$', houses),
     url(r'^houses/(\d+)/images$', house_img),
+    url(r'^houses/(\d+)/$', house_detail),
 ]

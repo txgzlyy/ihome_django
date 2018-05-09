@@ -34,7 +34,7 @@ class House(models.Model):
     create_time = models.DateTimeField(auto_now=False, default=timezone.now)
     update_time = models.DateTimeField(auto_now=True)
     #facilities = # db.relationship("Facility", secondary=house_facility)  # 房屋的设施
-    #images = # db.relationship("HouseImage")  # 房屋的图片
+
     #orders =  #db.relationship("Order", backref="house")  # 房屋的订单
     def get_dict(self):
         data = {
@@ -47,3 +47,25 @@ class House(models.Model):
         }
         return data
 
+    def get_full_datas(self):
+        img_urls = []  # 房屋展示图片
+        # self.houseimages_set.all() house_id 是图片标的外键   反查操作
+        for house_img_obj in self.houseimages_set.all():
+            img_urls.append(constens.QINIU_IMG_URL+house_img_obj.img_name)
+        data = {
+            'hid':self.id,
+            'title': self.title,
+            'img_urls':img_urls,
+            'area_name':self.area.name,
+            'price':self.price,
+            'ctime':self.create_time,
+            'user_avatar':constens.QINIU_IMG_URL+self.user.avator,
+            'user_name': self.user.name
+        }
+        return data
+
+
+class HouseImages(models.Model):
+    '''房屋图片'''
+    img_name = models.CharField(max_length=40, default='')
+    house = models.ForeignKey(House, null=False)  # 房屋的图片
