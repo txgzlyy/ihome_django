@@ -13,7 +13,7 @@ $(document).ready(function(){
             // 已认证的用户，请求其之前发布的房源信息
             $.get("/api/v1.0/user/houses", function(resp){
                 if ("0" == resp.errno) {
-                    $("#houses-list").html(template("houses-list-tmpl", {houses:resp.data.houses}));
+                    $("#houses-list").html(template("houses-list-tmpl", {houses:resp.houses}));
                 } else {
                     $("#houses-list").html(template("houses-list-tmpl", {houses:[]}));
                 }

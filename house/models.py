@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from django.utils import timezone
 from django.db import models
 from apiuser.models import UserInfos
+from apiuser.utils import constens
 
 # Create your models here.
 
@@ -29,8 +30,20 @@ class House(models.Model):
     max_days = models.IntegerField(default=0)  # 最多入住天数，0表示不限制
     order_count = models.IntegerField(default=0)  # 预订完成的该房屋的订单数
     index_image_url = models.CharField(max_length=30, default='')  # 房屋主图片的路径
+    #  auto_now=False  修改时候时间不会更新
+    create_time = models.DateTimeField(auto_now=False, default=timezone.now)
+    update_time = models.DateTimeField(auto_now=True)
     #facilities = # db.relationship("Facility", secondary=house_facility)  # 房屋的设施
     #images = # db.relationship("HouseImage")  # 房屋的图片
     #orders =  #db.relationship("Order", backref="house")  # 房屋的订单
-
+    def get_dict(self):
+        data = {
+            'house_id':self.id,
+            'title': self.title,
+            'index_image_url':constens.QINIU_IMG_URL+self.index_image_url,
+            'area_name':self.area.name,
+            'price':self.price,
+            'ctime':self.create_time
+        }
+        return data
 

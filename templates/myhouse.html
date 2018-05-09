@@ -39,27 +39,29 @@
                         <a href="/html/newhouse">发布新房源</a>
                     </div>
                 </li>
-
-{#                {{each houses as house}}#}
-{#                <li>#}
-{#                    <a href="/house/detail?id={{house.house_id}}">#}
-{#                        <div class="house-title">#}
-{#                            <h3>房屋ID:{{house.house_id}} —— {{house.title}}</h3>#}
-{#                        </div>#}
-{#                        <div class="house-content">#}
-{#                            <img src="{{house.index_image_url}}">#}
-{#                            <div class="house-text">#}
-{#                                <ul>#}
-{#                                    <li>位于：{{house.area_name}}</li>#}
-{#                                    <li>价格：￥{{house.price}}/晚</li>#}
-{#                                    <li>发布时间：{{house.ctime}}</li>#}
-{#                                </ul>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </a>#}
-{#                </li>#}
-{#                {{/each}}#}
-
+                <script id="houses-list-tmpl" type="text/html">
+                {% verbatim %}
+                {{each houses as house}}
+                <li>
+                    <a href="/house/detail?id={{house.house_id}}">
+                        <div class="house-title">
+                            <h3>房屋ID:{{house.house_id}} —— {{house.title}}</h3>
+                        </div>
+                        <div class="house-content">
+                            <img src="{{house.index_image_url}}">
+                            <div class="house-text">
+                                <ul>
+                                    <li>位于：{{house.area_name}}</li>
+                                    <li>价格：￥{{house.price}}/晚</li>
+                                    <li>发布时间：{{house.ctime}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {{/each}}
+                {% endverbatim %}
+                </script>
         </div>
         <div class="footer">
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>

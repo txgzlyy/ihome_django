@@ -86,7 +86,7 @@ $(document).ready(function(){
                     location.href = "/login.html";
                 } else if ("0" == resp.errno) {
                     // 在前端中添加一个img标签，展示上传的图片
-                    $(".house-image-cons").append('<img src="'+ resp.data.url+'">');
+                    $(".house-image-cons").append('<img src="'+ resp.url+'">');
                 } else {
                     alert(resp.errmsg);
                 }
