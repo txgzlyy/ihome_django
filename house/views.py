@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import json
 from django.db import transaction
-from models import House,Area,HouseImages
+from models import House,Area,HouseImages, Facilitys
 from django.http import JsonResponse
 from apiuser.utils.check import chech_get, chech_login
 from apiuser.utils.response_code import RET
@@ -44,7 +44,7 @@ def houses(req):
     address = get_datas.get('address')  # 详细地址
     min_days = get_datas.get("min_days")
     unit = get_datas.get('unit')  # 房屋单元
-    facility = get_datas.get('facility')  # 设施
+    facilitys = get_datas.get('facility')  # 设施
 
     house = House()
     house.user_id = user_id
@@ -63,9 +63,12 @@ def houses(req):
 
     said = transaction.savepoint()
     house.save()
-    print '-------------------------------------------------'
     try:
         transaction.savepoint_commit(said)
+        for facility in facilitys:
+            '''同步多对多的设施表'''
+            facility_obj = Facilitys.objects.filter(id=facility).first()  # 得到关联对象
+            house.facility.add(facility_obj)  # 添加中间表
     except Exception as e:
         print '*'*100
         transaction.savepoint_rollback(said)
@@ -133,7 +136,6 @@ def get_my_house(req):
 @chech_login
 def house_detail(req,house_id):
     house = House.objects.filter(id=house_id).first()
-    #print house.houseimages_set.all()
     data = {'house':house.get_full_datas()}
     return JsonResponse({'errno': RET.OK, 'errmsg': 'ok', 'data': data})
 

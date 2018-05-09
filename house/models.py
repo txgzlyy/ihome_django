@@ -13,6 +13,12 @@ class Area(models.Model):
     name = models.CharField(max_length=20, null=False)  # 区域名字
 
 
+class Facilitys(models.Model):
+    '''房屋设施'''
+    facility = models.CharField(max_length=20,null=False)
+
+
+
 class House(models.Model):
     '''房屋信息'''
     user = models.ForeignKey(UserInfos, null=False)  # 房屋主人的用户编号
@@ -33,8 +39,8 @@ class House(models.Model):
     #  auto_now=False  修改时候时间不会更新
     create_time = models.DateTimeField(auto_now=False, default=timezone.now)
     update_time = models.DateTimeField(auto_now=True)
-    #facilities = # db.relationship("Facility", secondary=house_facility)  # 房屋的设施
-
+    # house 和 facility 多对多
+    facility = models.ManyToManyField(Facilitys)
     #orders =  #db.relationship("Order", backref="house")  # 房屋的订单
     def get_dict(self):
         data = {
@@ -52,15 +58,27 @@ class House(models.Model):
         # self.houseimages_set.all() house_id 是图片标的外键   反查操作
         for house_img_obj in self.houseimages_set.all():
             img_urls.append(constens.QINIU_IMG_URL+house_img_obj.img_name)
+        facilitys = []
+        for facility in self.facility.all():
+            facilitys.append(facility.id)
         data = {
             'hid':self.id,
             'title': self.title,
             'img_urls':img_urls,
             'area_name':self.area.name,
             'price':self.price,
-            'ctime':self.create_time,
             'user_avatar':constens.QINIU_IMG_URL+self.user.avator,
-            'user_name': self.user.name
+            'user_name': self.user.name,
+            'address': self.address,
+            'room_count': self.room_count,
+            'acreage': self.acreage,
+            'unit': self.unit,
+            'capacity': self.capacity,
+            'beds': self.beds,
+            'deposit': self.deposit*100,
+            'min_days': self.min_days,
+            'max_days': self.max_days,
+            'facilities':facilitys
         }
         return data
 
@@ -69,3 +87,19 @@ class HouseImages(models.Model):
     '''房屋图片'''
     img_name = models.CharField(max_length=40, default='')
     house = models.ForeignKey(House, null=False)  # 房屋的图片
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
